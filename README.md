@@ -1,14 +1,42 @@
-# Project
+# Azure DICOM service with OHIF viewer
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/) on Azure and configurations needed to work with Azure Health Dicom service .
 
-As the maintainer of this project, please make a few updates:
+OHIF is a open source non-diagnostic viewer that uses DICOMWeb API's to find and render DICOM images.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Setup
+### Create a new Azure Health Data DICOM service
+- Create a Azure Health Data services workspace
+- Create a DICOM service
+- Enable RBAC
+- Enable CORs
+- Remember the `DICOM service Url`
+
+### Create a new AAD Application Client
+- Create a new AAD App registration
+- Set Authentication with Static websites with callback url and enable ID_Token and Token Auth
+- Add API Permission on "Azure API for Dicom" + ReadWrite
+- Grant Admin consent on the new API Permission
+- Remember the `Application\Client ID`
+
+### Deploy OHIF on Azure Storage Static Website 
+
+- <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-server%2Fmain%2Fsamples%2Ftemplates%2Fdefault-azuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+
+```cmd
+# Copy Static website content
+blobUrl="https://$storageAccountName.blob.core.windows.net/\$web/"
+azcopy rm $blobUrl --recursive=true --include-pattern="*"
+azcopy copy "build/*" $blobUrl --recursive
+
+# Ensure static webhosting is enabled
+az storage blob service-properties update --static-website --index-document "index.html" --account-name $storageAccountName --auth-mode login
+```
+- Update properties in app.config. 
+- Browse to the blobUrl to access OHIF viewer
+
+
+You can do additional Domain and CDN configurations as need.
 
 ## Contributing
 
