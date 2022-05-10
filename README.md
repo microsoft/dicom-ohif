@@ -1,22 +1,21 @@
 # Azure DICOM service with OHIF viewer
 
+[OHIF Viewer](https://ohif.org/) is a open source non-diagnostic viewer that uses DICOMWeb API's to find and render DICOM images.
+
 This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/) on Azure and configurations needed to work with Azure Health Dicom service .
 
-OHIF is a open source non-diagnostic viewer that uses DICOMWeb API's to find and render DICOM images.
-
-## Setup
+## Steps
 ### Create a new Azure Health Data DICOM service
-- Create a Azure Health Data services workspace
-- Create a DICOM service
-- Enable RBAC
-- Enable CORs
-- Remember the `DICOM service Url`
+- Create a [Azure Health Data services workspace](https://docs.microsoft.com/en-us/azure/healthcare-apis/healthcare-apis-quickstart).
+- Create a [DICOM service](https://docs.microsoft.com/en-us/azure/healthcare-apis/dicom/deploy-dicom-services-in-azure). Go to the newly created resource and remember the `Service URL`.
+- [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to provide read write access using "DICOM Data Owner" Role.
+- [TODO] Enable CORs
 
-### Create a new AAD Application Client
+### Create a new AAD Application Client to use on-behalf of workflow
 - Create a new AAD App registration
 - Set Authentication with Static websites with callback url and enable ID_Token and Token Auth
 - Add API Permission on "Azure API for Dicom" + ReadWrite
-- Grant Admin consent on the new API Permission
+- Grant Admin consent on the new API Permission to use the scope in delegated workflows.
 - Remember the `Application\Client ID`
 
 ### Deploy OHIF on Azure Storage Static Website 
