@@ -11,16 +11,23 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to provide read write access using "DICOM Data Owner" Role.
 - [TODO] Enable CORs
 
-### Create a new AAD Application Client to use on-behalf of workflow
-- Create a new AAD App registration
-- Set Authentication with Static websites with callback url and enable ID_Token and Token Auth
-- Add API Permission on "Azure API for Dicom" + ReadWrite
-- Grant Admin consent on the new API Permission to use the scope in delegated workflows.
+### Register an application with Microsoft Identity pltaform
+- [Register a new application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#register-an-application). Choose <b>Accounts in this organizational directory only</b> for who can access and skip Redirect URI.
+- [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the Dicom service
+    - <b>Skip</b> Certificates and secrets, since we will use delegated/on-behalf of workflow
+    - <b>Grant admin consent for your org to use the API</b>
+    - ![API permissions view with Admin consent](docs/imgs/aad-api-permission.png)
+- [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
+    - Under Configure platforms, select the <b>Web</b> tile.
+    - Specify the redirect URI to <b>%weburl%/callback</b>. Replace %weburl% after Deploying OHIF in the next step. 
+    - Select "Access tokens" and "ID tokens" flow.
+    - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
 - Remember the `Application\Client ID`
 
-### Deploy OHIF on Azure Storage Static Website 
+### Deploy OHIF Viewer on Azure Storage Static Website 
 
-- <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Click on the button to deploy storage Account </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Use Azure portal Cloud shell to run below commands to copy the OHIF viewer content to cloud and configure it.
 
 ```cmd
 # Copy Static website content
@@ -29,13 +36,14 @@ azcopy rm $blobUrl --recursive=true --include-pattern="*"
 azcopy copy "build/*" $blobUrl --recursive
 
 # Ensure static webhosting is enabled
-az storage blob service-properties update --static-website --index-document "index.html" --account-name $storageAccountName --auth-mode login
+az storage blob service-properties update --static-website true --index-document "index.html" --404-document "index.html" --account-name $storageAccountName --auth-mode login
 ```
 - Update properties in app.config. 
+- Go back to AAD application to replace the <b>%weburl%</b> with the ARM deployment output <b>storageAccountWebEndpoint</b>.
 - Browse to the blobUrl to access OHIF viewer
 
 
-You can do additional Domain and CDN configurations as need.
+| You can do additional Domain and CDN configurations as need.
 
 ## Contributing
 
