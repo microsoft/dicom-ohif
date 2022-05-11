@@ -28,18 +28,21 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 - Click on the button to deploy storage Account </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
-- Remember the `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable.
+- Remember the `storageaccount-name` input and `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable.
 
 - Use Azure portal Cloud shell to run below commands to copy the OHIF viewer website content to blob container and configure it.
 
 ```cmd
-# Copy Static website content
+# Set variables
 blobUrl="blobEndpoint/\$web/"
-sourceUrl="https://dcmcistorage.blob.core.windows.net/ohifbuild-05-10-2022"
-azcopy rm $blobUrl --recursive=true --include-pattern="*"
-azcopy copy $sourceUrl $blobUrl --recursive
+storageAccountName="storageaccount-name"
+sourceUrl="https://dcmcistorage.blob.core.windows.net/ohifbuild-05-10-2022/*"
 
-# Ensure static webhosting is enabled
+# Copy content
+azcopy login --identity
+azcopy copy $sourceUrl $blobUrl --recursive=true
+
+# Ensure static webhosting is enabled and configured
 az storage blob service-properties update --static-website true --index-document "index.html" --404-document "index.html" --account-name $storageAccountName --auth-mode login
 ```
 - Update OHIF Viewer configuration. 
