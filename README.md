@@ -22,7 +22,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
     - Specify the redirect URI to <b>%weburl%/callback</b>. Replace %weburl% after Deploying OHIF in the next step. 
     - Select "Access tokens" and "ID tokens" flow.
     - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
-- Remember the `Application\Client ID`
+- Remember the `Application (client) ID`
 
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
