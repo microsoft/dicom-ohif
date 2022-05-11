@@ -92,6 +92,10 @@
         "storageAccountWebEndpoint": {
             "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name')), variables('storageAccountApiVersion')).primaryEndpoints.web]",
             "type": "string"
+        },
+        "blobEndpoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name')), variables('storageAccountApiVersion')).primaryEndpoints.blob]"
         }
     }
 }

@@ -27,18 +27,30 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
 - Click on the button to deploy storage Account </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
-- Use Azure portal Cloud shell to run below commands to copy the OHIF viewer content to cloud and configure it.
+
+- Remember the `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable.
+
+- Use Azure portal Cloud shell to run below commands to copy the OHIF viewer website content to blob container and configure it.
 
 ```cmd
 # Copy Static website content
-blobUrl="https://$storageAccountName.blob.core.windows.net/\$web/"
+blobUrl="blobEndpoint/\$web/"
+sourceUrl="https://dcmcistorage.blob.core.windows.net/ohifbuild-05-10-2022"
 azcopy rm $blobUrl --recursive=true --include-pattern="*"
-azcopy copy "build/*" $blobUrl --recursive
+azcopy copy $sourceUrl $blobUrl --recursive
 
 # Ensure static webhosting is enabled
 az storage blob service-properties update --static-website true --index-document "index.html" --404-document "index.html" --account-name $storageAccountName --auth-mode login
 ```
-- Update properties in app.config. 
+- Update OHIF Viewer configuration. 
+    - Browse to Azure Portal -> Azure storage account created above -> $web container -> edit app-config.js
+    - Replace below variables
+
+    | Variable name | Value | Description |
+    | ------------- | ----- | ----------- |
+    | %dicom-service-url% | `Service URL` | Dicom service Url |
+    | %aad-tenant-id% | AAD Tenant ID | Your Azure subscription AAD Tenant Id |
+    | %application-client-id% | `Application\Client ID` | Application registered Client ID |
 - Go back to AAD application to replace the <b>%weburl%</b> with the ARM deployment output <b>storageAccountWebEndpoint</b>.
 - Browse to the blobUrl to access OHIF viewer
 
