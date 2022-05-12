@@ -11,7 +11,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to provide read write access using "DICOM Data Owner" Role.
 - [TODO] Enable CORs
 
-### Register an application with Microsoft Identity pltaform
+### Register an application with Microsoft Identity platform
 - [Register a new application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#register-an-application). Choose <b>Accounts in this organizational directory only</b> for who can access and skip Redirect URI.
 - [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the Dicom service
     - <b>Skip</b> Certificates and secrets, since we will use delegated/on-behalf of workflow
