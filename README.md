@@ -15,7 +15,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - [Register a new application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#register-an-application). Choose <b>Accounts in this organizational directory only</b> for who can access and skip Redirect URI.
 - [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the Dicom service
     - <b>Skip</b> Certificates and secrets, since we will use delegated/on-behalf of workflow
-    - <b>Grant admin consent for your org to use the API</b>
+    - <b>Grant admin consent for your org to use the API. Verify the green check in the diagram is checked. </b>
     - ![API permissions view with Admin consent](docs/imgs/aad-api-permission.png)
 - [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
     - Under Configure platforms, select the <b>Web</b> tile.
@@ -29,7 +29,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - Click on the button to deploy storage Account </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
 - Remember the `storageaccount-name` input and `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable.
-
+- Add Role assignment to 'storage account contributor'
 - Use Azure portal Cloud shell to run below commands to copy the OHIF viewer website content to blob container and configure it.
 
 ```cmd
