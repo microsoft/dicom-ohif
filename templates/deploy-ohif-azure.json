@@ -8,7 +8,7 @@
                 "description": "Desired name of the storage account instance"
             }
         },
-        "region": {
+        "regionForOhif": {
             "type": "string",
             "allowedValues": [
                 "australiaeast",
@@ -40,14 +40,14 @@
         "aadTenantId": {
             "type": "string",
             "metadata": {
-                "description": "Your existing Azure AD tenant ID (format: 72xxxxxf-xxxx-xxxx-xxxx-xxxxxxxxxxx"
+                "description": "Your existing Azure AD tenant ID (format: 72xxxxxf-xxxx-xxxx-xxxx-xxxxxxxxxxx)"
             },
             "defaultValue": "<Your Azure subscription AAD Tenant Id>"
         },
         "applicationClientId": {
             "type": "string",
             "metadata": {
-                "description": "Your existing Application (client) ID (format: 1f8xxxxx-dxxx-xxxx-xxxx-9exxxxxxxxxx"
+                "description": "Your existing Application (client) ID (format: 1f8xxxxx-dxxx-xxxx-xxxx-9exxxxxxxxxx)"
             },
             "defaultValue": "<Your Application Client ID>"
         }
@@ -173,6 +173,10 @@
         "storageAccountWebEndpoint": {
             "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.web]",
             "type": "string"
+        },
+        "blobEndpoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.blob]"
         }    
     }
 }

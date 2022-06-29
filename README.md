@@ -1,64 +1,64 @@
 # Azure DICOM service with OHIF viewer
 
-[OHIF Viewer](https://ohif.org/) is a open source non-diagnostic viewer that uses DICOMWeb API's to find and render DICOM images.
+[OHIF Viewer](https://ohif.org/) is a open source non-diagnostic DICOM viewer that uses DICOMweb API's to find and render DICOM images.
 
-This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/) on Azure and configurations needed to work with Azure Health Dicom service .
+This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/) on Azure and configurations needed to work with Azure Health Data Services DICOM service .
 
 ## Steps
 ### Create a new Azure Health Data DICOM service
 - Create a [Azure Health Data services workspace](https://docs.microsoft.com/en-us/azure/healthcare-apis/healthcare-apis-quickstart).
-- Create a [DICOM service](https://docs.microsoft.com/en-us/azure/healthcare-apis/dicom/deploy-dicom-services-in-azure). Go to the newly created resource and remember the `Service URL`.
+- Create a [DICOM service](https://docs.microsoft.com/en-us/azure/healthcare-apis/dicom/deploy-dicom-services-in-azure). Go to the newly created resource.
+- Make a note of the `Service URL` (the URL to the newly created DICOM service), it will be used in a later step.
 - [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to provide read write access using "DICOM Data Owner" Role.
 - Set CORS on DICOM service created in the previous step to allow web URL's that can access the service.
 
+
 ### Register an application with Microsoft Identity platform
 - [Register a new application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#register-an-application). Choose <b>Accounts in this organizational directory only</b> for who can access and skip Redirect URI.
-- [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the Dicom service
+- [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the DICOM service
     - <b>Skip</b> Certificates and secrets, since we will use delegated/on-behalf of workflow
     - <b>Grant admin consent for your org to use the API. Verify the green check in the diagram is checked. </b>
     - ![API permissions view with Admin consent](docs/imgs/aad-api-permission.png)
-- [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
-    - Under Configure platforms, select the <b>Web</b> tile.
-    - Specify the redirect URI to <b>%weburl%/callback</b>. Replace %weburl% after Deploying OHIF in the next step. 
-    - Select "Access tokens" and "ID tokens" flow.
-    - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
-- Remember the `Application (client) ID`
+- Make a note of the `Application (client) ID`, it will be used in a later step.
+- Make a note of the Azure Active Directory `Directory (tenant) ID`, it will be used in a later step. (It can also be found on the root Overview page of your Azure Active Directory. There it is listed as `Tenant ID`.)
+- Leave this browser tab open, as it will be used to add a redirect URI in a later step.
 
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
-- Click on the button to deploy storage Account </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fstevenborg%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Provide the following inputs:
 
-- Remember the `storageaccount-name` input and `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable.
-- Add Role assignment to 'storage account contributor'
-- Use Azure portal Cloud shell to run below commands to copy the OHIF viewer website content to blob container and configure it.
-
-```cmd
-# Set variables
-blobUrl="blobEndpoint/\$web/"
-storageAccountName="storageaccount-name"
-sourceUrl="https://dcmcistorage.blob.core.windows.net/ohifbuild-05-10-2022/*"
-
-# Copy content
-azcopy login --identity
-azcopy copy $sourceUrl $blobUrl --recursive=true
-
-# Ensure static webhosting is enabled and configured
-az storage blob service-properties update --static-website true --index-document "index.html" --404-document "index.html" --account-name $storageAccountName --auth-mode login
-```
-- Update OHIF Viewer configuration. 
-    - Browse to Azure Portal -> Azure storage account created above -> $web container -> edit app-config.js
-    - Replace below variables
-
-    | Variable name | Value | Description |
+    | Parameter | Value | Description |
     | ------------- | ----- | ----------- |
-    | %dicom-service-url% | `Service URL` | Dicom service Url |
-    | %aad-tenant-id% | AAD Tenant ID | Your Azure subscription AAD Tenant Id |
-    | %application-client-id% | `Application\Client ID` | Application registered Client ID |
-- Go back to AAD application to replace the <b>%weburl%</b> with the ARM deployment output <b>storageAccountWebEndpoint</b>.
-- Browse to the blobUrl to access OHIF viewer
+    | Subscription | user provided | Desired subsciption to host the OHIF viewer 
+    | Resource Group | user provided | Desired Resource Group name. May be a new or existing.
+    | Region | user provided | Desired Azure Region to host the Resource Group
+    | Storage Account Name | user provided | Desired name of storage account. This will appear in the OHIF URL.
+    | Region | user provided | Desired Azure Region to host the Storage Account.
+    | Dicom Service Url | `Service URL` | Existing DICOM service URL (noted above) 
+    | Aad Teanant Id | `Directory (tenant) ID` | Existing Azure subscription AAD Tenant Id (noted above)
+    | Application Client ID  | `Application (client) ID` | Existing Application Client ID (noted above)
+
+- Make a note of the `storageaccount-name` input and `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
+- Add Role assignment to 'storage account contributor'.
 
 
-| You can do additional Domain and CDN configurations as need.
+### Complete the configuration of the application created earlier
+- Go back to browser tab with the AAD application created earlier (or reopen if necessary).
+- [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
+    - Under Configure platforms, select the <b>Web</b> tile.
+    - Specify the redirect URI to <b>%storageAccountWebEndpoint%/callback</b>. 
+    - Select "Access tokens" and "ID tokens" flow.
+    - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
+
+### Configure security to allow appropriate users
+TODO
+
+### Test the installation
+- Browse to the `storageAccountWebEndpoint` to access OHIF viewer
+
+
+> You can do additional Domain and CDN configurations as need.
 
 ## Contributing
 
