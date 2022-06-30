@@ -17,7 +17,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - [Register a new application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#register-an-application). Choose <b>Accounts in this organizational directory only</b> for who can access and skip Redirect URI.
 - [Grant scoped permission](https://docs.microsoft.com/en-us/azure/healthcare-apis/register-application) to the DICOM service
     - <b>Skip</b> Certificates and secrets, since we will use delegated/on-behalf of workflow
-    - <b>Grant admin consent for your org to use the API. Verify the green check in the diagram is checked. </b>
+    - <b>Grant admin consent</b> for your org to use the API. <b>Verify the green check in the diagram is checked. </b>
     - ![API permissions view with Admin consent](docs/imgs/aad-api-permission.png)
 - Make a note of the `Application (client) ID`, it will be used in a later step.
 - Make a note of the Azure Active Directory `Directory (tenant) ID`, it will be used in a later step. (It can also be found on the root Overview page of your Azure Active Directory. There it is listed as `Tenant ID`.)
@@ -50,6 +50,11 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
     - Specify the redirect URI to <b>%storageAccountWebEndpoint%/callback</b>. 
     - Select "Access tokens" and "ID tokens" flow.
     - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
+
+> Note: If you receive a `Need admin approval` (as below), ensure you have green check in the Status column of of the Configured Permissions of your application. (See `Register an application with Microsoft Identity platform` section above.) In some organizations, this may require a separate, and potentially manual, process for approval.
+
+> ![Auth Error](docs/imgs/need-admin-error.png)
+
 
 ### Configure security to allow appropriate users
 TODO
