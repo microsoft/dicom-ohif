@@ -2,11 +2,54 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "storageaccount_name": {
-            "type": "String",
+        "storageAccountName": {
+            "type": "string",
             "metadata": {
-                "description": "Name of the storage account instance"
+                "description": "Desired name of the storage account instance"
             }
+        },
+        "regionForOhif": {
+            "type": "string",
+            "allowedValues": [
+                "australiaeast",
+                "canadacentral",
+                "eastus",
+                "eastus2",
+                "germanywestcentral",
+                "japaneast",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus2"
+            ]
+        },
+        "dicomServiceUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Your existing DICOM service URL (format: https://yourworkspacename-yourdicomservicename.dicom.azurehealthcareapis.com)"
+            },
+            "defaultValue": "<The URL to your DICOM service>"
+        },
+        "aadTenantId": {
+            "type": "string",
+            "metadata": {
+                "description": "Your existing Azure AD tenant ID (format: 72xxxxxf-xxxx-xxxx-xxxx-xxxxxxxxxxx)"
+            },
+            "defaultValue": "<Your Azure subscription AAD Tenant Id>"
+        },
+        "applicationClientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Your existing Application (client) ID (format: 1f8xxxxx-dxxx-xxxx-xxxx-9exxxxxxxxxx)"
+            },
+            "defaultValue": "<Your Application Client ID>"
         }
     },
     "variables": {
@@ -16,8 +59,8 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "[variables('storageAccountApiVersion')]",
-            "name": "[parameters('storageaccount_name')]",
-            "location": "southcentralus",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('region')]",
             "sku": {
                 "name": "Standard_ZRS",
                 "tier": "Standard"
@@ -26,7 +69,7 @@
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
                 "allowBlobPublicAccess": false,
-                "allowSharedKeyAccess": false,
+                "allowSharedKeyAccess": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -53,9 +96,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "[variables('storageAccountApiVersion')]",
-            "name": "[concat(parameters('storageaccount_name'), '/default')]",
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
             "sku": {
                 "name": "Standard_ZRS",
@@ -73,10 +116,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "[variables('storageAccountApiVersion')]",
-            "name": "[concat(parameters('storageaccount_name'), '/default/$web')]",
+            "name": "[concat(parameters('storageAccountName'), '/default/$web')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageaccount_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
             "properties": {
                 "immutableStorageWithVersioning": {
@@ -86,16 +129,54 @@
                 "denyEncryptionScopeOverride": false,
                 "publicAccess": "None"
             }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "UploadOhifFilesToBlob",
+            "location": "[resourceGroup().location]",
+            "kind": "AzureCLI",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', '$web')]" 
+            ],
+            "properties": {
+                "forceUpdateTag": "1",
+                "azCliVersion": "2.9.1",
+                "timeout": "PT30M",
+                "arguments": "[concat(parameters('storageAccountName'), ' ', '$web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value, ' ', parameters('dicomServiceUrl'), ' ', parameters('aadTenantId'), ' ', parameters('applicationClientId'))]",
+                "scriptContent": "wget -O ohif.zip https://github.com/StevenBorg/dicom-ohif/blob/main/build/ohif.zip?raw=true ; unzip ohif.zip -d ohiffiles ; sed -i \"s|%dicom-service-url%|$4|g\" ./ohiffiles/app-config.js ; sed -i \"s|%aad-tenant-id%|$5|g\" ./ohiffiles/app-config.js ; sed -i \"s|%application-client-id%|$6|g\" ./ohiffiles/app-config.js ; az storage blob upload-batch -d $2 -s ./ohiffiles --account-name $1 --account-key $3",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "SetContainerAsWebSite",
+            "location": "[resourceGroup().location]",
+            "kind": "AzureCLI",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', '$web')]" 
+            ],
+            "properties": {
+                "forceUpdateTag": "1",
+                "azCliVersion": "2.9.1",
+                "timeout": "PT30M",
+                "arguments": "[concat(parameters('storageAccountName'), ' ', '$web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value)]",
+                "scriptContent": "az storage blob service-properties update --static-website true --index-document 'index.html' --404-document 'index.html' --account-name $1 --account-key $3",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
         }
     ],
     "outputs": {
         "storageAccountWebEndpoint": {
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name')), variables('storageAccountApiVersion')).primaryEndpoints.web]",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.web]",
             "type": "string"
         },
         "blobEndpoint": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount_name')), variables('storageAccountApiVersion')).primaryEndpoints.blob]"
-        }
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.blob]"
+        }    
     }
 }
