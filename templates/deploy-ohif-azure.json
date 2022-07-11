@@ -8,28 +8,6 @@
                 "description": "Desired name of the storage account instance"
             }
         },
-        "regionForOhif": {
-            "type": "string",
-            "allowedValues": [
-                "australiaeast",
-                "canadacentral",
-                "eastus",
-                "eastus2",
-                "germanywestcentral",
-                "japaneast",
-                "northcentralus",
-                "northeurope",
-                "southafricanorth",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "uksouth",
-                "ukwest",
-                "westcentralus",
-                "westeurope",
-                "westus2"
-            ]
-        },
         "dicomServiceUrl": {
             "type": "string",
             "metadata": {
@@ -60,7 +38,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "[variables('storageAccountApiVersion')]",
             "name": "[parameters('storageAccountName')]",
-            "location": "[parameters('region')]",
+            "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard_ZRS",
                 "tier": "Standard"
@@ -144,7 +122,7 @@
                 "azCliVersion": "2.9.1",
                 "timeout": "PT30M",
                 "arguments": "[concat(parameters('storageAccountName'), ' ', '$web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value, ' ', parameters('dicomServiceUrl'), ' ', parameters('aadTenantId'), ' ', parameters('applicationClientId'))]",
-                "scriptContent": "wget -O ohif.zip https://github.com/StevenBorg/dicom-ohif/blob/main/build/ohif.zip?raw=true ; unzip ohif.zip -d ohiffiles ; sed -i \"s|%dicom-service-url%|$4|g\" ./ohiffiles/app-config.js ; sed -i \"s|%aad-tenant-id%|$5|g\" ./ohiffiles/app-config.js ; sed -i \"s|%application-client-id%|$6|g\" ./ohiffiles/app-config.js ; az storage blob upload-batch -d $2 -s ./ohiffiles --account-name $1 --account-key $3",
+                "scriptContent": "wget -O ohif.zip https://github.com/microsoft/dicom-ohif/blob/main/build/ohif.zip?raw=true ; unzip ohif.zip -d ohiffiles ; sed -i \"s|%dicom-service-url%|$4|g\" ./ohiffiles/app-config.js ; sed -i \"s|%aad-tenant-id%|$5|g\" ./ohiffiles/app-config.js ; sed -i \"s|%application-client-id%|$6|g\" ./ohiffiles/app-config.js ; az storage blob upload-batch -d $2 -s ./ohiffiles --account-name $1 --account-key $3",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
             }

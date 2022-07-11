@@ -25,16 +25,15 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
-- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fstevenborg%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 - Provide the following inputs:
 
     | Parameter | Value | Description |
     | ------------- | ----- | ----------- |
     | Subscription | user provided | Desired subsciption to host the OHIF viewer 
     | Resource Group | user provided | Desired Resource Group name. May be a new or existing.
-    | Region | user provided | Desired Azure Region to host the Resource Group
+    | Region | user provided | Desired Azure Region to host the Resource Group and Storage account website.
     | Storage Account Name | user provided | Desired name of storage account. This will appear in the OHIF URL.
-    | Region | user provided | Desired Azure Region to host the Storage Account.
     | Dicom Service Url | `Service URL` | Existing DICOM service URL (noted above) 
     | Aad Teanant Id | `Directory (tenant) ID` | Existing Azure subscription AAD Tenant Id (noted above)
     | Application Client ID  | `Application (client) ID` | Existing Application Client ID (noted above)
