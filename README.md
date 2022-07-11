@@ -26,7 +26,8 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
 - Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
-- Provide the following inputs:
+
+    Provide the following inputs:
 
     | Parameter | Value | Description |
     | ------------- | ----- | ----------- |
@@ -38,8 +39,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
     | Aad Teanant Id | `Directory (tenant) ID` | Existing Azure subscription AAD Tenant Id (noted above)
     | Application Client ID  | `Application (client) ID` | Existing Application Client ID (noted above)
 
-- Make a note of the `storageaccount-name` input and `storageAccountWebEndpoint` and `blobEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
-- Add Role assignment to 'storage account contributor'.
+- Make a note of the `storageAccountWebEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
 
 
 ### Complete the configuration of the application created earlier
@@ -54,9 +54,6 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 > ![Auth Error](docs/imgs/need-admin-error.png)
 
-
-### Configure security to allow appropriate users
-TODO
 
 ### Test the installation
 - Browse to the `storageAccountWebEndpoint` to access OHIF viewer
