@@ -10,7 +10,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 - Create a [DICOM service](https://docs.microsoft.com/en-us/azure/healthcare-apis/dicom/deploy-dicom-services-in-azure). Go to the newly created resource.
 - Make a note of the `Service URL` (the URL to the newly created DICOM service), it will be used in a later step.
 - [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to yourself or users accessing OHIF viewer to provide read write access using "DICOM Data Owner" Role.
-- Set CORS on DICOM service created in the previous step to allow web URL's that can access the service.
+- Set [CORS](https://learn.microsoft.com/en-us/azure/healthcare-apis/dicom/configure-cross-origin-resource-sharing) on DICOM service created in the previous step to allow web URL's that can access the service.
 
 
 ### Register an application with Microsoft Identity platform
