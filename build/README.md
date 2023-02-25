@@ -1,4 +1,3 @@
 # Manual steps
-- Follow the OHIF viewer [build-for-production](https://docs.ohif.org/deployment/recipes/build-for-production.html) 
-- Run `yarn run build:package` to create a module package
-- Copy the build output except app-config.json to https://dcmcistorage.blob.core.windows.net/ohifbuild-05-10-2022 
+- Download the latest OHIF viwer build from https://unpkg.com/browse/@ohif/viewer@4.10.0/dist/
+- build the zip and upload
