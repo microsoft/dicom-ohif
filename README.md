@@ -45,8 +45,10 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 If your Dicom service is in an Azure Health Data Services workspace with private link enabled then you will need to configure a few things in the storage account created in the previous step.
 - Navigate to the storage account that was created as part of the deployment of OHIF viewer from the previous step
 - Add a new private endpoint (`Security + Networking` > `Networking` > `Private Endpoint Connections` > `+ Private Endpoint`) to the same vnet and subnet as your Dicom service. The target resource should be `web`.
+  ![Create Private Endpoint for OHIF](docs/imgs/ohif-private-endpoint.png)
 - Disable public network access (`Security + Networking` > `Networking` > `Private Endpoint Connections` > `Public Network Acccess` > `Disabled`)
-- 
+  ![Disable Public Access for OHIF](docs/imgs/ohif-disable-public-access.png)
+
 Once the remainder of the following steps are completed you will be able to access the OHIF viewer on a device connected to the same virtual network.
 
 
