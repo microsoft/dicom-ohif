@@ -41,6 +41,16 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 - Make a note of the `storageAccountWebEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
 
+#### Enabling OHIF Viewer on a Private Link enabled workspace
+If your Dicom service is in an Azure Health Data Services workspace with private link enabled then you will need to configure a few things in the storage account created in the previous step.
+- Navigate to the storage account that was created as part of the deployment of OHIF viewer from the previous step
+- Add a new private endpoint (`Security + Networking` > `Networking` > `Private Endpoint Connections` > `+ Private Endpoint`) to the same vnet and subnet as your Dicom service. The target resource should be `web`.
+  ![Create Private Endpoint for OHIF](docs/imgs/ohif-private-endpoint.png)
+- Disable public network access (`Security + Networking` > `Networking` > `Firewalls and virtual networks` > `Private Endpoint Connections` > `Public Network Acccess` > `Disabled`)
+  ![Disable Public Access for OHIF](docs/imgs/ohif-disable-public-access.png)
+
+Once the remainder of the following steps are completed you will be able to access the OHIF viewer on a device connected to the same virtual network.
+
 
 ### Complete the configuration of the application created earlier
 - Go back to browser tab with the AAD application created earlier (or reopen if necessary).
