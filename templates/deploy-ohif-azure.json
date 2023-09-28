@@ -272,7 +272,7 @@
         {
             "type": "Microsoft.Cdn/profiles/endpoints/origins",
             "apiVersion": "2022-11-01-preview",
-            "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), [concat('default-origin-', parameters('cdnName'))])]",
+            "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), '/', concat('default-origin-', parameters('cdnName')))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Cdn/profiles/endpoints', parameters('cdnName'), parameters('cdnName'))]",
                 "[resourceId('Microsoft.Cdn/profiles', parameters('cdnName'))]"
@@ -283,7 +283,7 @@
                 "weight": 1000,
                 "enabled": true
             }
-        },
+        }
     ],
     "outputs": {
         "storageAccountWebEndpoint": {
@@ -293,6 +293,10 @@
         "blobEndpoint": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.blob]"
+        },
+        "cdnEndpoint": {
+            "type": "string",
+            "value": "[concat('https://', reference(concat(parameters('cdnName'), '/endpoints/', parameters('cdnName')), '2022-11-01-preview').hostName)]"
         }    
     }
 }

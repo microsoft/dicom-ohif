@@ -25,7 +25,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
-- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fbcarthic%2Fohiftest%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
     Provide the following inputs:
 
@@ -38,8 +38,9 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
     | Dicom Service Url | `Service URL` | Existing DICOM service URL (noted above) 
     | Aad Teanant Id | `Directory (tenant) ID` | Existing Azure subscription AAD Tenant Id (noted above)
     | Application Client ID  | `Application (client) ID` | Existing Application Client ID (noted above)
+    | CDN Name  | user provided | Desired name for the cdn instance
 
-- Make a note of the `storageAccountWebEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
+- Make a note of the `cdnEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
 
 #### Enabling OHIF Viewer on a Private Link enabled workspace
 If your Dicom service is in an Azure Health Data Services workspace with private link enabled then you will need to configure a few things in the storage account created in the previous step.
@@ -56,7 +57,7 @@ Once the remainder of the following steps are completed you will be able to acce
 - Go back to browser tab with the AAD application created earlier (or reopen if necessary).
 - [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
     - Under Configure platforms, select the <b>Web</b> tile.
-    - Specify the redirect URI to <b>%storageAccountWebEndpoint%/callback</b>. 
+    - Specify the redirect URI to <b>%cdnEndpoint%/callback</b>. 
     - Select "Access tokens" and "ID tokens" flow.
     - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
 
@@ -66,7 +67,7 @@ Once the remainder of the following steps are completed you will be able to acce
 
 
 ### Test the installation
-- Browse to the `storageAccountWebEndpoint` to access OHIF viewer
+- Browse to the `cdnEndpoint` to access OHIF viewer
 
 
 > You can do additional Domain and CDN configurations as need.
