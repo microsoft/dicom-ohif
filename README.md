@@ -25,7 +25,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 ### Deploy OHIF Viewer on Azure Storage Static Website 
 
-- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fbcarthic%2Fohiftest%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+- Click on the button to deploy a new Storage Account and configure it to host OHIF. </br> <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fdicom-ohif%2Fmain%2Ftemplates%2Fdeploy-ohif-azure.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
     Provide the following inputs:
 
