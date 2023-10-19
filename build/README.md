@@ -58,7 +58,7 @@ oidc: [
     },
   ],
 ```
-- Zip the dist folder and rename it to ohif.zip. Update the current zip in the repo.
+- Zip contents of the dist folder and rename it to ohif.zip. Update the current zip in the repo.
 
 ## How to upload ohif.zip to existing account
 - Take the contents of the ohif.zip and replace the contents in the storage account.
