@@ -4,7 +4,7 @@
 - Run `npm view @ohif/app@3.7.0 dist.tarball` to get the url of the latest version of the OHIF viewer. Replace `3.7.0` with the latest version of the OHIF viewer. You can find the latest the version of the OHIF viewer [here](https://www.npmjs.com/package/@ohif/app?activeTab=versions).
 - Download the tarball from the url returned by the previous command.
 - Extract the tarball.
-- Compare the contents of the \app-3.6.0\package\dist\app-config.js with the \build\app-config.js. Ensure the dicomweb configuration is the same and add the oidc attributes to the \app-3.6.0\package\dist\app-config.js if they are missing.
+- Compare the contents of the \app-3.7.0\package\dist\app-config.js with the \build\app-config.js. Ensure the dicomweb configuration is the same and add the oidc attributes to the \app-3.7.0\package\dist\app-config.js if they are missing.
 
 Below is the sample oidc configuration and data source configuration for Azure DICOM service:
 
