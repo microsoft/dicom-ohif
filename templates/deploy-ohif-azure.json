@@ -100,7 +100,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "[variables('storageAccountApiVersion')]",
-            "name": "[concat(parameters('storageAccountName'), '/default/$web')]",
+            "name": "[concat(parameters('storageAccountName'), '/default/web')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
@@ -121,13 +121,13 @@
             "location": "[resourceGroup().location]",
             "kind": "AzureCLI",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', '$web')]" 
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'web')]" 
             ],
             "properties": {
                 "forceUpdateTag": "1",
                 "azCliVersion": "2.9.1",
                 "timeout": "PT30M",
-                "arguments": "[concat(parameters('storageAccountName'), ' ', '$web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value, ' ', parameters('dicomServiceUrl'), ' ', parameters('aadTenantId'), ' ', parameters('applicationClientId'))]",
+                "arguments": "[concat(parameters('storageAccountName'), ' ', 'web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value, ' ', parameters('dicomServiceUrl'), ' ', parameters('aadTenantId'), ' ', parameters('applicationClientId'))]",
                 "scriptContent": "wget -O ohif.zip https://github.com/microsoft/dicom-ohif/blob/main/build/ohif.zip?raw=true ; unzip ohif.zip -d ohiffiles ; sed -i \"s|%dicom-service-url%|$4|g\" ./ohiffiles/app-config.js ; sed -i \"s|%aad-tenant-id%|$5|g\" ./ohiffiles/app-config.js ; sed -i \"s|%application-client-id%|$6|g\" ./ohiffiles/app-config.js ; az storage blob upload-batch -d $2 -s ./ohiffiles --account-name $1 --account-key $3",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
@@ -140,13 +140,13 @@
             "location": "[resourceGroup().location]",
             "kind": "AzureCLI",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', '$web')]" 
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'web')]" 
             ],
             "properties": {
                 "forceUpdateTag": "1",
                 "azCliVersion": "2.9.1",
                 "timeout": "PT30M",
-                "arguments": "[concat(parameters('storageAccountName'), ' ', '$web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value)]",
+                "arguments": "[concat(parameters('storageAccountName'), ' ', 'web', ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys[0].value)]",
                 "scriptContent": "az storage blob service-properties update --static-website true --index-document 'index.html' --404-document 'index.html' --account-name $1 --account-key $3",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
@@ -162,7 +162,8 @@
             },
             "kind": "cdn",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deploymentScripts', 'SetContainerAsWebSite')]"
+                "[resourceId('Microsoft.Resources/deploymentScripts', 'SetContainerAsWebSite')]",
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'web')]"
             ],
             "properties": {
                 "extendedProperties": {}
