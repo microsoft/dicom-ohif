@@ -301,7 +301,7 @@
         },
         "cdnEndpoint": {
             "type": "string",
-            "value": "[concat('https://', reference(concat(parameters('cdnName'), '/endpoints/', parameters('cdnName')), '2022-11-01-preview').hostName)]"
+            "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('cdnName'), parameters('cdnName')), '2022-11-01-preview').hostName]"
         }    
     }
 }
