@@ -175,7 +175,9 @@
             "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'))]",
             "location": "Global",
             "dependsOn": [
-                "[resourceId('Microsoft.Cdn/profiles', parameters('cdnName'))]"
+                "[resourceId('Microsoft.Cdn/profiles', parameters('cdnName'))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', 'SetContainerAsWebSite')]",
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'web')]"
             ],
             "properties": {
                 "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('storageAccountApiVersion')).primaryEndpoints.web, 'https://', ''), '/', '')]",
