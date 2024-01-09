@@ -57,7 +57,7 @@ Once the remainder of the following steps are completed you will be able to acce
 - Go back to browser tab with the AAD application created earlier (or reopen if necessary).
 - [Add a redirect URI](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app#add-a-redirect-uri) to the OHIF viewer callback url to pass the token the web app.
     - Under Configure platforms, select the <b>Web</b> tile.
-    - Specify the redirect URI to <b>%cdnEndpoint%/callback</b>. 
+    - Specify the redirect URI to <b>https://%cdnEndpoint%/callback</b>. 
     - Select "Access tokens" and "ID tokens" flow.
     - ![Auth Redirect setup](docs/imgs/aad-auth-redirect.png)
 
