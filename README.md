@@ -40,7 +40,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
     | Application Client ID  | `Application (client) ID` | Existing Application Client ID (noted above)
     | CDN Name  | user provided | Desired name for the cdn instance
 
-- Make a note of the `cdnEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
+- Make a note of the `cdnEndpoint` and `storageAccountWebEndpoint` from the ARM deployment output variable. (You can find the output variables on the left-hand column, once the custom ARM template has successfully completed creating resources.)
 
 #### Enabling OHIF Viewer on a Private Link enabled workspace
 If your Dicom service is in an Azure Health Data Services workspace with private link enabled then you will need to configure a few things in the storage account created in the previous step.
@@ -50,8 +50,9 @@ If your Dicom service is in an Azure Health Data Services workspace with private
 - Disable public network access (`Security + Networking` > `Networking` > `Firewalls and virtual networks` > `Private Endpoint Connections` > `Public Network Acccess` > `Disabled`)
   ![Disable Public Access for OHIF](docs/imgs/ohif-disable-public-access.png)
 
-Once the remainder of the following steps are completed you will be able to access the OHIF viewer on a device connected to the same virtual network.
+The OHIF viewer won't be accessible from the `cdnEndpoint` but instead it will be accessible through `storageAccountWebEndpoint` (which is the storage account static website endpoint). But accessing from `storageAccountWebEndpoint` will cause "Cross Origin Isolation is not enabled, read more about it here: https://docs.ohif.org/faq/". To resolve this error, you need to change the \Storageaccount\$web\app-config.js file to include `useSharedAccessBuffer: 'FALSE'` under datasource configuration. The app-config.js file can be found in the storage account created in the previous step. The app-config.js file can be found under the $web container in the storage account. You can edit the file by clicking on the file and then clicking on the view/edit  option. Once you have made the change, click on the save button on the top.
 
+Once the remainder of the following steps are completed you will be able to access the OHIF viewer on a device connected to the same virtual network.
 
 ### Complete the configuration of the application created earlier
 - Go back to browser tab with the AAD application created earlier (or reopen if necessary).
@@ -67,8 +68,8 @@ Once the remainder of the following steps are completed you will be able to acce
 
 
 ### Test the installation
-- Browse to the `cdnEndpoint` to access OHIF viewer
-
+- Browse to the `cdnEndpoint` to access OHIF viewer for non-private link DICOM service. 
+- For private link enabled DICOM service, browse to the `storageAccountWebEndpoint` to access OHIF viewer with `useSharedAccessBuffer: 'FALSE'` set in \Storageaccount\$web\app-config.js.
 
 > You can do additional Domain and CDN configurations as need.
 
