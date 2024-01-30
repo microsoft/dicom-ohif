@@ -20,6 +20,7 @@ dataSources: [
         qidoRoot: '%dicom-service-url%/v1',
         wadoRoot: '%dicom-service-url%/v1',
         qidoSupportsIncludeField: true,
+        dicomUploadEnabled: true,
         supportsReject: false,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',

@@ -70,6 +70,7 @@ Once the remainder of the following steps are completed you will be able to acce
 ### Test the installation
 - Browse to the `cdnEndpoint` to access OHIF viewer for non-private link DICOM service. 
 - For private link enabled DICOM service, browse to the `storageAccountWebEndpoint` to access OHIF viewer with `useSharedAccessBuffer: 'FALSE'` set in \Storageaccount\$web\app-config.js.
+- By default, upload is enabled by default. If you want to disable upload, you can do so by setting `dicomUploadEnabled: false` in \Storageaccount\$web\app-config.js.
 
 > You can do additional Domain and CDN configurations as need.
 
