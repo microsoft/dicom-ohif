@@ -52,6 +52,8 @@ If your Dicom service is in an Azure Health Data Services workspace with private
 
 The OHIF viewer won't be accessible from the `cdnEndpoint` but instead it will be accessible through `storageAccountWebEndpoint` (which is the storage account static website endpoint). But accessing from `storageAccountWebEndpoint` will cause "Cross Origin Isolation is not enabled, read more about it here: https://docs.ohif.org/faq/". To resolve this error, you need to change the \Storageaccount\$web\app-config.js file to include `useSharedAccessBuffer: 'FALSE'` under datasource configuration. The app-config.js file can be found in the storage account created in the previous step. The app-config.js file can be found under the $web container in the storage account. You can edit the file by clicking on the file and then clicking on the view/edit  option. Once you have made the change, click on the save button on the top.
 
+**Make sure the storage account and the DICOM service are in the same virtual network.**
+
 Once the remainder of the following steps are completed you will be able to access the OHIF viewer on a device connected to the same virtual network.
 
 ### Complete the configuration of the application created earlier
