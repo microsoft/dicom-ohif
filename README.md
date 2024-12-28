@@ -6,7 +6,7 @@ This project provides guidence on deployment of [OHIF Viewer](https://ohif.org/)
 
 ## Steps
 ### Create a new Azure Health Data DICOM service
-- Create a [Azure Health Data services workspace](https://docs.microsoft.com/en-us/azure/healthcare-apis/healthcare-apis-quickstart).
+- Create an [Azure Health Data services workspace](https://docs.microsoft.com/en-us/azure/healthcare-apis/healthcare-apis-quickstart).
 - Create a [DICOM service](https://docs.microsoft.com/en-us/azure/healthcare-apis/dicom/deploy-dicom-services-in-azure). Go to the newly created resource.
 - Make a note of the `Service URL` (the URL to the newly created DICOM service), it will be used in a later step.
 - [Assign roles](https://docs.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac#assign-roles-for-the-dicom-service) to yourself or users accessing OHIF viewer to provide read write access using "DICOM Data Owner" Role.
